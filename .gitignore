@@ -23,5 +23,5 @@
 hs_err_pid*
 
 #editors
-.idea
-.vscode
+.idea/**
+.vscode/**
