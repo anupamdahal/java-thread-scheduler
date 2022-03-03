@@ -16,10 +16,10 @@ public class Producer implements Runnable {
       JobNode node = new JobNode(
         i,
         ThreadLocalRandom.current().nextInt(
-          SleepRange.min,
-          SleepRange.max + 1 
+          SleepRange.MIN,
+          SleepRange.MAX + 1 
         ));
-      queue.add(node); 
+      queue.push(node); 
     }
   }
 }

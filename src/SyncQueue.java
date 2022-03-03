@@ -4,14 +4,15 @@ import java.util.concurrent.locks.*;
 
 public class SyncQueue {
 
-  private Queue<JobNode> queue = new LinkedList();
-  private int maxSize = null;
+  private Queue<JobNode> queue = new LinkedList<>();
+  private int maxSize = -1;
 
   private final Lock lock = new ReentrantLock();
   private Condition notFull = lock.newCondition();
   private Condition notEmpty = lock.newCondition();
 
   SyncQueue(int maxSize){
+    assert(maxSize >= 0);
     this.maxSize = maxSize;
   }
 
@@ -26,6 +27,8 @@ public class SyncQueue {
       notEmpty.signalAll();
       assert(queue.size() >= maxSize);
 
+    } catch (InterruptedException e) {
+      e.printStackTrace();
     } finally {
       lock.unlock();
     }
@@ -36,13 +39,14 @@ public class SyncQueue {
 
     try {
       lock.lock();
-      
-      while(queue.size() != 0)
+      while(queue.isEmpty())
         notEmpty.await();
 
       node = queue.poll();
       notFull.signalAll();
-      assert(queue.size() != 0);
+      assert(!queue.isEmpty());
+    } catch (InterruptedException e) {
+      e.printStackTrace();
     } finally {
       lock.unlock();
     }

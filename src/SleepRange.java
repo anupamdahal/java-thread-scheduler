@@ -1,4 +1,7 @@
 public final class SleepRange {
-  public static int min = 100;
-  public static int max = 400;
+  public static final int MIN = 100;
+  public static final int MAX = 400;
+
+  private SleepRange(){
+  }
 }
