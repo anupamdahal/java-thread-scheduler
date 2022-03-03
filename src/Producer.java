@@ -1,13 +1,25 @@
-public class Producer implements Runnable {
+import java.util.concurrent.ThreadLocalRandom;
 
-  Producer(){
-    
+public class Producer implements Runnable {
+  
+  private SyncQueue queue;
+  private int capacity;
+
+  Producer(SyncQueue queue, int capacity){
+    this.queue = queue;
+    this.capacity = capacity;
   }
 
   @Override
   public void run() {
-    // TODO Auto-generated method stub
-    
+    for(int i = 0; i < capacity; i++){
+      JobNode node = new JobNode(
+        i,
+        ThreadLocalRandom.current().nextInt(
+          SleepRange.min,
+          SleepRange.max + 1 
+        ));
+      queue.add(node); 
+    }
   }
-  
 }

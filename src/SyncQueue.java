@@ -1,27 +1,53 @@
-public class SyncQueue{
+import java.util.Queue;
+import java.util.LinkedList;
+import java.util.concurrent.locks.*;
 
-  class Node{
-    JobNode jNode;
-    Node next;
-    
-    Node(JobNode jobNode){
-      this.jNode = jobNode;
-      this.next = null;
+public class SyncQueue {
+
+  private Queue<JobNode> queue = new LinkedList();
+  private int maxSize = null;
+
+  private final Lock lock = new ReentrantLock();
+  private Condition notFull = lock.newCondition();
+  private Condition notEmpty = lock.newCondition();
+
+  SyncQueue(int maxSize){
+    this.maxSize = maxSize;
+  }
+
+  void push(JobNode node){
+    try {
+      lock.lock();
+      
+      while(queue.size() >= maxSize)
+        notFull.await();
+
+      queue.offer(node);
+      notEmpty.signalAll();
+      assert(queue.size() >= maxSize);
+
+    } finally {
+      lock.unlock();
     }
   }
+  
+  JobNode pop(){
+    JobNode node = null;
 
-  Node start;
-  Node end;
+    try {
+      lock.lock();
+      
+      while(queue.size() != 0)
+        notEmpty.await();
 
-  SyncQueue(){
-  }
-
-  void push(Node node){
-    return;
-  }
-
-  Node pop(){
-    return null;
+      node = queue.poll();
+      notFull.signalAll();
+      assert(queue.size() != 0);
+    } finally {
+      lock.unlock();
+    }
+    
+    return node;
   }
   
 }
