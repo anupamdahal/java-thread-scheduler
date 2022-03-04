@@ -5,19 +5,19 @@
 public class Consumer implements Runnable {
 
     private SyncQueue queue;
-    private int capacity;
+    private int noJobs;
 
     //Constructor
-    Consumer(SyncQueue queue, int capacity){
+    Consumer(SyncQueue queue, int noJobs ){
         this.queue = queue;
-        this.capacity = capacity;
+        this.noJobs = noJobs;
     }
 
     //This method will perform "execution" (pause depending on the JobNode's sleepTime)
 
     @Override
     public void run(){
-        for(int i = 0; i < capacity; i++){
+        for(int i = 0; i < noJobs; i++){
             JobNode node = queue.pop();
             nodeSleep(node);
             System.out.println(node.processId);
@@ -27,7 +27,7 @@ public class Consumer implements Runnable {
     public void nodeSleep(JobNode j){
         try{
             Thread.sleep(j.sleepTime);
-            System.out.println(Thread.currentThread());
+            System.out.println(Thread.currentThread().getName());
         }
         catch(Exception e) {
             System.out.println("ERROR! ERROR!");
